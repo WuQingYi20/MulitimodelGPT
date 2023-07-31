@@ -13,15 +13,15 @@ if hugging_face_key:
 else:
     st.write("Failed to load Hugging Face key.")
 
-def image2text(img_path):
-    st.write(f"Processing image at path: {img_path}")
-    try:
-        image_to_text = pipeline("image-to-text", model="Salesforce/blip-image-captioning-large")
-        text = image_to_text(img_path)
-        st.write(f"Generated text: {text}")
-        return text[0]["generated_text"]
-    except Exception as e:
-        st.write(f"Error in image2text: {str(e)}")
+def image2text(filename):
+    API_URL = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
+    headers = {"Authorization": f"Bearer {hugging_face_key}"}
+
+    with open(filename, "rb") as f:
+        data = f.read()
+    response = requests.post(API_URL, headers=headers, data=data)
+    return response.json()[0]["generated_text"]
+
 
 def generate_story(scenario):
     try:
